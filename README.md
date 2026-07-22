@@ -20,7 +20,7 @@ This is just yet another rep for me with many more to come
 
 ## Making it repeatable
 
-The biggest gain is turning all this work into clean repeatable scripts so that I can quickly recreate teardown and recreate the cluster from scatch
+The biggest gain is turning all this work into clean repeatable scripts so that I can quickly teardown and recreate the cluster from scatch
 
 ## Architecture Diagram
 
