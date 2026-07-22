@@ -2,7 +2,7 @@
 # teardown.sh --- Proxmox level kubeadm cluster destroyer
 # Runs ON the Proxmox host (pve-01). Drains and deleted nodes, followed by kubeadm reset and destroys created VMS
 set -euo pipefail
-source ./config
+source ./config.sh
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # SECTION 1 - Parse optional --destroy flag. Default: soft reset (kubeadm reset, vms stay alive)
