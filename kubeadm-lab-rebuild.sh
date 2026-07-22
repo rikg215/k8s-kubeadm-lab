@@ -47,12 +47,19 @@ done
 # ═══════════════════════════════════════════════════════════
 wait_for_ssh() {
     local ip=$1 hostname=$2
+    local max_attempts=60 attempt=0
     echo "==> Waiting for cloud-init + SSH on $hostname ($ip)..."
     # cloud-init runs on first boot — give it time
     until ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" 'echo ready' &>/dev/null; do
+        ((++attempt))
+        if ((attempt >= max_attempts)); then
+            echo "ERROR: $hostname ($ip) not reachable after $((max_attempts * 5))s" >&2
+            echo "       Check: qm status <vmid> / console for cloud-init errors" >&2
+            exit 1
+        fi
         sleep 5
     done
-    echo "==> $hostname is up"
+    echo "==> $hostname is up ($((attempt * 5))s)"
 }
 
 # ═══════════════════════════════════════════════════════════
