@@ -232,7 +232,7 @@ verify_cluster
 echo ""
 echo "╔══════════════════════════════════════╗"
 echo "║  Cluster ready.                      ║"
-echo "║  ssh labuser@${CP_IP%/*}           ║"
+echo "║  ssh labuser@${CP_IP%/*}            ║"
 echo "║  kubectl get nodes                   ║"
 echo "╚══════════════════════════════════════╝"
 
