@@ -195,9 +195,9 @@ verify_cluster() {
 # ═══════════════════════════════════════════════════════════
 echo "╔══════════════════════════════════════╗"
 echo "║  kubeadm-lab cluster rebuild         ║"
-echo "║  Template: $TEMPLATE_ID              ║"
-echo "║  CP:  $CP_HOSTNAME  ($CP_IP)         ║"
-echo "║  Workers: $WORKER_COUNT              ║"
+echo "║  Template: $TEMPLATE_ID                      ║"
+echo "║  CP:  $CP_HOSTNAME  ($CP_IP)║"
+echo "║  Workers: $WORKER_COUNT                          ║"
 echo "╚══════════════════════════════════════╝"
 
 # Wait for all VMs to boot
@@ -232,7 +232,7 @@ verify_cluster
 echo ""
 echo "╔══════════════════════════════════════╗"
 echo "║  Cluster ready.                      ║"
-echo "║  ssh labuser@${CP_IP%/*}             ║"
+echo "║  ssh labuser@${CP_IP%/*}           ║"
 echo "║  kubectl get nodes                   ║"
 echo "╚══════════════════════════════════════╝"
 

@@ -24,15 +24,15 @@ SSH_OPTS=(-o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new)
 # CONTROL PLANE
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 CP_HOSTNAME="k8s-cp-01-hl"
-CP_IP="${SUBNET_PREFIX}.140${CIDR_SUFFIX}" # CIDR notation for qm set --ipconfig0
-CP_VMID=601
+CP_IP="${SUBNET_PREFIX}.64${CIDR_SUFFIX}" # CIDR notation for qm set --ipconfig0
+CP_VMID=604
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # WORKERS
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 WORKER_COUNT=2
 WORKER_PREFIX="k8s-w"
-WORKER_START_VMID=602
+WORKER_START_VMID=605
 WORKER_START_IP=65                   # first worker gets 192.168.0.65, next .66, etc.
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
