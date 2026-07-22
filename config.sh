@@ -38,3 +38,5 @@ BRIDGE="vmbr0"
 POD_CIDR="10.244.0.0/16"             # Flannel default
 SERVICE_CIDR="10.96.0.0/12"
 
+# CNI version — pin for reproducible rebuilds; check flannel-io/flannel releases before bumping
+FLANNEL_VERSION="v0.28.7"
