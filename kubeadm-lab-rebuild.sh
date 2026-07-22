@@ -79,6 +79,14 @@ setup_node() {
     ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" bash <<'ENDSSH'
 set -euo pipefail
 
+# === kubeadm prerequisites ===
+sudo swapoff -a
+sudo sed -i '/\sswap\s/s/^/#/' /etc/fstab
+printf 'overlay\nbr_netfilter\n' | sudo tee /etc/modules-load.d/k8s.conf
+sudo modprobe overlay br_netfilter
+printf 'net.ipv4.ip_forward=1\nnet.bridge.bridge-nf-call-iptables=1\n' | sudo tee /etc/sysctl.d/99-k8s.conf
+sudo sysctl --system
+
 # === containerd (Debian) ===
 # Docker's apt repo for containerd
 sudo apt update
@@ -141,7 +149,7 @@ sudo cp /etc/kubernetes/admin.conf \$HOME/.kube/config
 sudo chown \$(id -u):\$(id -g) \$HOME/.kube/config
 
 # Apply Flannel CNI
-kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/releases/download/${FLANNEL_VERSION}/kube-flannel.yml
+kubectl apply -f https://github.com/flannel-io/flannel/releases/download/${FLANNEL_VERSION}/kube-flannel.yml
 ENDSSH
 }
 
