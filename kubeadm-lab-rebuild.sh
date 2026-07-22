@@ -38,7 +38,7 @@ for ((i=0; i<WORKER_COUNT; i++)); do
     worker_vmid=$((WORKER_START_VMID + i))
     worker_ip_num=$((WORKER_START_IP + i))
     worker_hostname="${WORKER_PREFIX}$((i+1))"
-    worker_ip="192.168.0.${worker_ip_num}/24"
+    worker_ip="${SUBNET_PREFIX}.${worker_ip_num}${CIDR_SUFFIX}"
     clone_vm "$worker_vmid" "$worker_hostname" "$worker_ip"
 done
 
@@ -195,7 +195,7 @@ echo "╚═══════════════════════�
 # Wait for all VMs to boot
 wait_for_ssh "${CP_IP%/*}" "$CP_HOSTNAME"
 for ((i=0; i<WORKER_COUNT; i++)); do
-    worker_ip="192.168.0.$((WORKER_START_IP + i))"
+    worker_ip="${SUBNET_PREFIX}.$((WORKER_START_IP + i))"
     worker_hostname="${WORKER_PREFIX}$((i+1))"
     wait_for_ssh "$worker_ip" "$worker_hostname"
 done
@@ -203,7 +203,7 @@ done
 # Node setup (containerd + kubeadm) on all nodes
 setup_node "${CP_IP%/*}" "$CP_HOSTNAME"
 for ((i=0; i<WORKER_COUNT; i++)); do
-    worker_ip="192.168.0.$((WORKER_START_IP + i))"
+    worker_ip="${SUBNET_PREFIX}.$((WORKER_START_IP + i))"
     worker_hostname="${WORKER_PREFIX}$((i+1))"
     setup_node "$worker_ip" "$worker_hostname"
 done
@@ -213,7 +213,7 @@ init_control_plane "${CP_IP%/*}"
 
 # Join workers
 for ((i=0; i<WORKER_COUNT; i++)); do
-    worker_ip="192.168.0.$((WORKER_START_IP + i))"
+    worker_ip="${SUBNET_PREFIX}.$((WORKER_START_IP + i))"
     worker_hostname="${WORKER_PREFIX}$((i+1))"
     join_worker "$worker_ip" "$worker_hostname"
 done

@@ -25,7 +25,7 @@ ssh labuser@$CP_IP "
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 echo "==> Resetting workers..."                                                                                                                           
 for ((i=0; i<WORKER_COUNT; i++)); do                                                                                                                      
-    worker_ip="192.168.0.$((WORKER_IP_START + i))"                                                                                                        
+    worker_ip="${SUBNET_PREFIX}.$((WORKER_IP_START + i))"                                                                                                        
     ssh labuser@$worker_ip 'sudo kubeadm reset -f' 2>/dev/null || echo "  worker $i unreachable (may be already down)"                                    
 done
 
@@ -48,5 +48,5 @@ fi
 echo "==> Removing stale SSH host keys"
 ssh-keygen -R "${CP_IP%/*}" 2>/dev/null || true
 for ((i=0; i<WORKER_COUNT; i++)); do
-    ssh-keygen -R "192.168.0.$((WORKER_START_IP + i))" 2>/dev/null || true
+    ssh-keygen -R "${SUBNET_PREFIX}.$((WORKER_START_IP + i))" 2>/dev/null || true
 done

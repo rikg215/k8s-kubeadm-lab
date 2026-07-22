@@ -15,7 +15,7 @@ SSH_OPTS=(-o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new)
 # CONTROL PLANE
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 CP_HOSTNAME="k8s-cp-01-hl"
-CP_IP="192.168.0.64/24"              # CIDR notation for qm set --ipconfig0
+CP_IP="${SUBNET_PREFIX}.140${CIDR_SUFFIX}" # CIDR notation for qm set --ipconfig0
 CP_VMID=601
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -29,8 +29,11 @@ WORKER_START_IP=65                   # first worker gets 192.168.0.62, next .63,
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # NETWORK
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-GATEWAY="192.168.0.1"
+GATEWAY="${SUBNET_PREFIX}.1"
 BRIDGE="vmbr0"
+# Network — single source of truth for the lab subnet
+SUBNET_PREFIX="192.168.0"
+CIDR_SUFFIX="/24"
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # KUBEADM
