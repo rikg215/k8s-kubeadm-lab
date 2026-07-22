@@ -49,8 +49,7 @@ wait_for_ssh() {
     local ip=$1 hostname=$2
     echo "==> Waiting for cloud-init + SSH on $hostname ($ip)..."
     # cloud-init runs on first boot — give it time
-    until ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no \
-              "${SSH_USER}@${ip}" 'echo ready' &>/dev/null; do
+    until ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" 'echo ready' &>/dev/null; do
         sleep 5
     done
     echo "==> $hostname is up"
@@ -65,12 +64,12 @@ setup_node() {
     echo "==> Setting up $hostname ($ip)"
 
     # IDEMPOTENCY GUARD: skip if kubeadm already installed
-    if ssh "${SSH_USER}@${ip}" 'command -v kubeadm &>/dev/null && echo installed' | grep -q installed; then
+    if ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" 'command -v kubeadm &>/dev/null && echo installed' | grep -q installed; then
         echo "    kubeadm already installed, skipping node setup"
         return 0
     fi
 
-    ssh "${SSH_USER}@${ip}" bash <<'ENDSSH'
+    ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" bash <<'ENDSSH'
 set -euo pipefail
 
 # === containerd (Debian) ===
@@ -117,13 +116,13 @@ init_control_plane() {
     local ip=$1
 
     # GUARD
-    if ssh "${SSH_USER}@${ip}" '[ -f /etc/kubernetes/admin.conf ] && echo exists' | grep -q exists; then
+    if ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" '[ -f /etc/kubernetes/admin.conf ] && echo exists' | grep -q exists; then
         echo "==> Control plane already initialized, skipping"
         return 0
     fi
 
     echo "==> Initializing control plane on $CP_HOSTNAME"
-    ssh "${SSH_USER}@${ip}" bash <<ENDSSH
+    ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" bash <<ENDSSH
 sudo kubeadm init \\
     --pod-network-cidr=${POD_CIDR} \\
     --service-cidr=${SERVICE_CIDR} \\
@@ -147,7 +146,7 @@ join_worker() {
 
     # GUARD: check if node already in cluster
     local cp_ip="${CP_IP%/*}"
-    if ssh "${SSH_USER}@${cp_ip}" "kubectl get node ${worker_hostname} &>/dev/null && echo joined" 2>/dev/null | grep -q joined; then
+    if ssh "${SSH_OPTS[@]}" "${SSH_USER}@${cp_ip}" "kubectl get node ${worker_hostname} &>/dev/null && echo joined" 2>/dev/null | grep -q joined; then
         echo "==> $worker_hostname already joined, skipping"
         return 0
     fi
@@ -156,9 +155,9 @@ join_worker() {
 
     # Generate fresh token from CP
     local join_cmd
-    join_cmd=$(ssh "${SSH_USER}@${cp_ip}" 'sudo kubeadm token create --print-join-command 2>/dev/null')
+    join_cmd=$(ssh "${SSH_OPTS[@]}" "${SSH_USER}@${cp_ip}" 'sudo kubeadm token create --print-join-command 2>/dev/null')
 
-    ssh "${SSH_USER}@${worker_ip}" "sudo ${join_cmd}"
+    ssh "${SSH_OPTS[@]}" "${SSH_USER}@${worker_ip}" "sudo ${join_cmd}"
 }
 
 # ═══════════════════════════════════════════════════════════
@@ -170,10 +169,10 @@ verify_cluster() {
     echo "╔══════════════════════════════════════╗"
     echo "║  CLUSTER STATUS                      ║"
     echo "╚══════════════════════════════════════╝"
-    ssh "${SSH_USER}@${cp_ip}" 'kubectl get nodes -o wide'
+    ssh "${SSH_OPTS[@]}" "${SSH_USER}@${cp_ip}" 'kubectl get nodes -o wide'
     echo ""
     echo "==> Pods (all namespaces):"
-    ssh "${SSH_USER}@${cp_ip}" 'kubectl get pods -A'
+    ssh "${SSH_OPTS[@]}" "${SSH_USER}@${cp_ip}" 'kubectl get pods -A'
 }
 
 # ═══════════════════════════════════════════════════════════
