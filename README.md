@@ -24,32 +24,20 @@ The biggest gain is turning all this work into clean repeatable scripts so that 
 
 ## Architecture Diagram
 
-─────────────────────────────────────┐
-
-│ Proxmox (R710) │
-
-│ ┌──────────┐ ┌────────┐ ┌──────┐│
-
-│ │k8s-cp-1│ │k8s-worker-1│ │k8s-worker-2││
-
-│ │2vCPU/4GB │ │2vCPU/4G│ │2vCPU/4││
-
-│ │ControlPl │ │Worker │ │Worker ││
-
-│ └──────────┘ └────────┘ └──────┘│
-
-│ │ Flannel CNI (VXLAN) │
-
-│ └──────────┬──────────────────┘
-
-│ │
-
-│ kubeadm init config:
-
-│ podSubnet: 10.244.0.0/16
-
-│ serviceSubnet: 10.96.0.0/12
-
-└─────────────────────────────────────┘
-
-
+```text
+┌────────────────────────────────────────────────────────┐
+│                    Proxmox (R710)                      │
+│                                                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │  k8s-cp-1    │  │ k8s-worker-1 │  │ k8s-worker-2 │  │
+│  │  2vCPU / 4GB │  │ 2vCPU / 4GB  │  │ 2vCPU / 4GB  │  │
+│  │ ControlPlane │  │    Worker    │  │    Worker    │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │
+│         └────────────┬────┴─────────────────┘          │
+│               Flannel CNI (VXLAN)                      │
+│                                                        │
+│  kubeadm init config:                                  │
+│    podSubnet:     10.244.0.0/16                        │
+│    serviceSubnet: 10.96.0.0/12                         │
+└────────────────────────────────────────────────────────┘
+```
