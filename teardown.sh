@@ -43,3 +43,10 @@ if $DESTROY_VMS; then
 else                                                                                                                                                      
     echo "==> Cluster reset. VMs still running. Run rebuild.sh to re-init."                                                                               
 fi                                
+
+# Purge stale host keys — next rebuild gets fresh keys on these IPs
+echo "==> Removing stale SSH host keys"
+ssh-keygen -R "${CP_IP%/*}" 2>/dev/null || true
+for ((i=0; i<WORKER_COUNT; i++)); do
+    ssh-keygen -R "192.168.0.$((WORKER_START_IP + i))" 2>/dev/null || true
+done
