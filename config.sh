@@ -17,7 +17,7 @@ BRIDGE="vmbr0"
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 TEMPLATE_ID=9997                     # k8s-debian13-cloudinit (cloud-init + SSH key + static IP)
 SSH_USER="labuser"                   # cloud-init injects pubkey for this user
-SSH_KEY="/root/.ssh/id_rsa.pub"      # Proxmox root's RSA key
+SSH_KEY="${SSH_KEY:-/root/.ssh/lab_authorized_keys}"      # pve-01 root + desktop pubkeys
 SSH_OPTS=(-o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new)
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
