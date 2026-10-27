@@ -154,6 +154,35 @@ ENDSSH
 }
 
 # ═══════════════════════════════════════════════════════════
+# STEP 4b: Install etcdctl/etcdutl on control plane (matched to cluster etcd)
+# ═══════════════════════════════════════════════════════════
+install_etcd_tools() {
+    local ip=$1
+
+    # GUARD
+    if ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" 'command -v etcdctl && command -v etcdutl' &>/dev/null; then
+        echo "==> etcdctl/etcdutl already installed, skipping"
+        return 0
+    fi
+
+    echo "==> Installing etcdctl/etcdutl on $CP_HOSTNAME"
+    ssh "${SSH_OPTS[@]}" "${SSH_USER}@${ip}" bash <<'ENDSSH'
+set -euo pipefail
+# Pull etcd version from the kubeadm static pod image tag (e.g. 3.6.8-0 → v3.6.8)
+ETCD_VER="v$(sudo grep -oP 'registry.k8s.io/etcd:\K[0-9.]+' /etc/kubernetes/manifests/etcd.yaml)"
+TARBALL="etcd-${ETCD_VER}-linux-amd64"
+
+curl -fsSL "https://github.com/etcd-io/etcd/releases/download/${ETCD_VER}/${TARBALL}.tar.gz" -o /tmp/etcd.tgz
+tar xzf /tmp/etcd.tgz -C /tmp
+sudo install -m 0755 "/tmp/${TARBALL}/etcdctl" "/tmp/${TARBALL}/etcdutl" /usr/local/bin/
+rm -rf /tmp/etcd.tgz "/tmp/${TARBALL}"
+
+etcdctl version
+etcdutl version
+ENDSSH
+}
+
+# ═══════════════════════════════════════════════════════════
 # STEP 5: Join workers
 # ═══════════════════════════════════════════════════════════
 join_worker() {
@@ -218,6 +247,9 @@ done
 
 # Init control plane + Flannel
 init_control_plane "${CP_IP%/*}"
+
+# etcd client tools (version-matched)
+install_etcd_tools "${CP_IP%/*}"
 
 # Join workers
 for ((i=0; i<WORKER_COUNT; i++)); do
